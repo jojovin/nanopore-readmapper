@@ -1,10 +1,9 @@
-from Bio import Align
 from Bio import SeqIO
 import sys
 import argparse
 import SAM_creater
 
-def main(): 
+def main():
     argparser = argparse.ArgumentParser(description='Read mapper for RNA nanopore full-length reads')
     argparser.add_argument('fasta', help='fasta file with reference sequence')
     argparser.add_argument('fastq', help='fastq file with reads')
