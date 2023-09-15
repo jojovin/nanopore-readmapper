@@ -5,9 +5,9 @@ Readmapper for RNA secondary structure determination data containing full length
 
 ## read_mapper_2.py
 ``` shell
-python3 read_mapper_2.py ref.fasta reads.fastq output.sam -m 1.0 -x 0.0 -o (-2.0) -e (-1.0)
+python3 read_mapper_2.py ref.fasta reads.fastq output.sam -m 1.0 -x 0.0 -o 2.0 -e 1.0
 ```
-This script takes a reference genome in fasta format and a fastq file with reads and creates a SAM file with the alignments of the reads to the reference genome. The SAM file is outputted to the file specified by the user. The SAM file can then be sorted and indexed using samtools.
+This script takes a reference genome in fasta format and a fastq file with reads and creates a SAM file with the alignments of the reads to the reference genome. Options determine alignment parameters (m: match score, x: mismatch score, o: gap opening penalty, e: gap extention penalty). The SAM file is outputted to the file specified by the user. The SAM file can then be sorted and indexed using samtools.
 
 
 ## SAM_creator.py
