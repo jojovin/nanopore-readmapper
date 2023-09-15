@@ -14,7 +14,7 @@ def main():
     for line in SAM.SAMlines:
         insmaps.append(mapInsertionsFromSAMline(line))
 
-    out_list=insertionDict(insmaps)
+    out_list=insertionDict(insmaps,135)
     with open(args.out, "w") as f:
         f.write("position,insertions\n")
         for i in range(len(out_list)):
@@ -47,7 +47,7 @@ def mapInsertionsFromSAMline(SAMline: SAM_creater.SAMline):
             continue
     return map
 
-def insertionDict(maps):
+def insertionDict(maps,reflen=0):
     insertions = {}
     for map in maps:
         for i in map:
@@ -55,8 +55,14 @@ def insertionDict(maps):
                 insertions[i] = 1
             else:
                 insertions[i] += 1
+    for i in range(reflen):
+        if i not in insertions:
+            insertions[i] = 0
     positions=sorted(insertions)
     insertions_list = []
     for position in positions:
         insertions_list.append(insertions[position])         
     return insertions_list
+
+if __name__ == "__main__":
+    main()
