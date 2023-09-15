@@ -1,0 +1,44 @@
+---
+title: "Nanopore_data"
+author: "Johan Vinther"
+date: "2023-09-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(patchwork)
+```
+
+```{r}
+insertions_modified <- read.csv("/Users/au606858/nanopore-readmapper/nanopore-readmapper/mod_insert.csv")
+insertions_unmodified <- read.csv("/Users/au606858/nanopore-readmapper/nanopore-readmapper/unmod_insert.csv")
+
+#Normalized by number of reads
+insertions_modified$insertions <- insertions_modified$insertions/7984
+insertions_unmodified$insertions <- insertions_unmodified$insertions/5183
+
+#Normalized by max insertions
+#insertions_modified$insertions <- insertions_modified$insertions/max(insertions_modified$insertions)
+#insertions_unmodified$insertions <- insertions_unmodified$insertions/max(insertions_unmodified$insertions)
+
+insertions_diff <- insertions_modified %>% mutate(insertions_unmod=insertions_unmodified$insertions) %>% mutate(ins_diff=insertions/insertions_unmod)
+
+sum(insertions_modified$insertions/7984)/sum(insertions_unmodified$insertions/5183)
+```
+
+```{r}
+unmod_ins <- insertions_unmodified[1:125,] %>% ggplot(aes(x=position, y=insertions))+
+  geom_line()+
+  ggtitle("Unmodified")
+mod_ins <- insertions_modified[1:125,] %>% ggplot(aes(x=position, y=insertions))+
+  geom_line()+
+  ggtitle("Modified")
+mod_diff <- insertions_diff[1:125,] %>% ggplot(aes(x=position, y=log(ins_diff)))+
+  geom_line()+
+  ggtitle("Difference")
+
+unmod_ins/mod_ins/mod_diff
+```
+
