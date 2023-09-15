@@ -10,8 +10,8 @@ argparser.add_argument('fastq', help='fastq file with reads')
 argparser.add_argument('sam', help='sam file output')
 argparser.add_argument('-m','--match', required=False, default=1.0, help='match score (0 or positive)', type=float)
 argparser.add_argument('-x','--mismatch', required=False, default=0.0, help='mismatch score (0 or negative)', type=float)
-argparser.add_argument('-o','--gapopen', required=False, default=-2.0, help='gap open score (Should be negative)', type=float)
-argparser.add_argument('-e','--gapext', required=False, default=-1.0, help='gap extension score (Should be negative)', type=float)
+argparser.add_argument('-o','--gapopen', required=False, default=2.0, help='gap open score (Should be positive, as it will be treated as negative)', type=float)
+argparser.add_argument('-e','--gapext', required=False, default=1.0, help='gap extension score (Should be positive, as it will be treated as negative)', type=float)
 args = argparser.parse_args()
 
 fasta = args.fasta
@@ -34,16 +34,15 @@ def progressbar(it, prefix="", size=60, out=sys.stdout): # Python3.3+
     print("\n", flush=True, file=out)
 
 print("Aligning reads to reference...")
-alignments = SAM_creater.alignToReference(reference, reads, match=args.match, mismatch=args.mismatch, gapopen=args.gapopen, gapext=args.gapext,verbose=False)
+alignments = SAM_creater.alignToReference(reference, reads, match=args.match, mismatch=args.mismatch, gapopen=-args.gapopen, gapext=-args.gapext,verbose=False)
 print("Finished aligning!")
 
 SAM = SAM_creater.SAM()
+SAM.header = SAM_creater.makeHeader(reference.name, str(len(reference.seq)))
 
-progress = 0
 for alignment in progressbar(range(len(alignments)), "Writing SAM file: ", 40):
-    # if progress % 100 == 0:
-    #     print("Writing read " + str(progress+1) + " of " + str(len(alignments)) + "...")
-    SAM.append(SAM_creater.SAMline(alignments[alignment]))
-    progress += 1
+    S = SAM_creater.SAMline()
+    S.fromAlignment(alignments[alignment])
+    SAM.append(S)
 
 SAM.WriteSAM(sam_file)
