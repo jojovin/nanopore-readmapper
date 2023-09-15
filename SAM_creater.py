@@ -1,7 +1,5 @@
 from Bio import Align
 
-
-
 def makeCIGAR(alignment) -> str:
     cigar = ""
     for i in range(len(alignment[0])):
