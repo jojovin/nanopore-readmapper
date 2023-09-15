@@ -12,8 +12,8 @@ library(patchwork)
 ```
 
 ```{r}
-insertions_modified <- read.csv("/Users/au606858/nanopore-readmapper/nanopore-readmapper/mod_insert.csv")
-insertions_unmodified <- read.csv("/Users/au606858/nanopore-readmapper/nanopore-readmapper/unmod_insert.csv")
+insertions_modified <- read.csv("/Users/au606858/nanopore-readmapper/nanopore-readmapper/output/mod_insert.csv")
+insertions_unmodified <- read.csv("/Users/au606858/nanopore-readmapper/nanopore-readmapper/output/unmod_insert.csv")
 
 #Normalized by number of reads
 insertions_modified$insertions <- insertions_modified$insertions/7984

@@ -8,29 +8,40 @@ def main():
     argparser.add_argument('out', help='output file')
     args = argparser.parse_args()
 
-    SAM = readSAM(args.sam)
+    SAM, reflen = readSAM(args.sam)
 
     insmaps = []
     for line in SAM.SAMlines:
         insmaps.append(mapInsertionsFromSAMline(line))
 
-    out_list=insertionDict(insmaps,135)
+    out_list=insertionDict(insmaps,reflen)
     with open(args.out, "w") as f:
         f.write("position,insertions\n")
         for i in range(len(out_list)):
             f.write(str(i)+","+str(out_list[i])+"\n")
 
 def readSAM(sam_file):
+    '''
+    Reads a SAM file and returns a SAM object and the reference length
+    '''
     SAM = SAM_creater.SAM()
+    reflen = 0
     with open(sam_file, "r") as f:
         for line in f:
+            if line[0:3] == "@SQ":
+                reference = line.split("\t")
+                for i in reference:
+                    if i[0:2] == "LN":
+                        reflen = int(i[3:])
+                        break
+                continue
             if line[0] == "@":
                 continue
             else:
                 S = SAM_creater.SAMline()
                 S.fromSAM(line)
                 SAM.append(S)
-    return SAM
+    return SAM, reflen
 
 def mapInsertionsFromSAMline(SAMline: SAM_creater.SAMline):
     CIGAR = SAMline.CIGAR
