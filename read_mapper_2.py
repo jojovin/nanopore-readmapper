@@ -8,6 +8,7 @@ def main():
     argparser.add_argument('fasta', help='fasta file with reference sequence')
     argparser.add_argument('fastq', help='fastq file with reads')
     argparser.add_argument('sam', help='sam file output')
+    argparser.add_argument('-d','--discard', required=False, default=True, help='Discard alignments with lower score than (70*(match_score)/135)*len(reference)', type=bool)
     argparser.add_argument('-m','--match', required=False, default=1.0, help='match score (0 or positive)', type=float)
     argparser.add_argument('-x','--mismatch', required=False, default=0.0, help='mismatch score (0 or negative)', type=float)
     argparser.add_argument('-o','--gapopen', required=False, default=2.0, help='gap open score (Should be positive, as it will be treated as negative)', type=float)
@@ -23,6 +24,9 @@ def main():
 
     print("Aligning reads to reference...")
     alignments = SAM_creater.alignToReference(reference, reads, match=args.match, mismatch=args.mismatch, gapopen=-args.gapopen, gapext=-args.gapext,verbose=False)
+    if args.discard==True:
+        alignments = [a for a in alignments if a.score > (len(reference)*(70*int(args.match)/135))]
+        print("Discarded alignments with score lower than "+str((len(reference)*(70*int(args.match)/135))))
     print("Finished aligning!")
 
     SAM = SAM_creater.SAM()
