@@ -38,7 +38,6 @@ def main():
         SAM.append(S)
 
     SAM.SortSAM()
-    print(SAM.SAMlines[0:10])
     SAM.WriteSAM(sam_file)
 
 def progressbar(it, prefix="", size=60, out=sys.stdout): # Python3.3+
