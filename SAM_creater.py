@@ -69,7 +69,7 @@ class SAMline:
         self.TLEN=TLEN
         self.READ_SEQ=SEQ
         self.QUAL=QUAL
-        self.line=str(self.READ_NAME + "\t" + str(self.FLAG) + "\t" + self.REF_NAME + "\t" + str(POS) + "\t" + str(self.MAPQ) + "\t" + self.CIGAR + "\t" + self.RNEXT + "\t" + str(self.PNEXT) + "\t" + str(self.TLEN) + "\t" + self.READ_SEQ + "\t" + self.QUAL + "\n")
+        self.line=str(self.READ_NAME + "\t" + str(self.FLAG) + "\t" + self.REF_NAME + "\t" + str(self.POS) + "\t" + str(self.MAPQ) + "\t" + self.CIGAR + "\t" + self.RNEXT + "\t" + str(self.PNEXT) + "\t" + str(self.TLEN) + "\t" + self.READ_SEQ + "\t" + self.QUAL + "\n")
         return
 
     def fromAlignment(self, alignment, verbose=False) -> None:
@@ -84,15 +84,14 @@ class SAMline:
             if c.isdigit():
                 POS_count += 1
             elif c == "D":
-                POS = self.CIGAR[0:POS_count]
-                POS = str(int(POS)+1)
+                self.POS = int(self.CIGAR[0:POS_count])
+                self.POS = self.POS+1
                 self.CIGAR = self.CIGAR[POS_count+1:]
                 break
             else:
-                POS = "1"
+                self.POS = 1
                 break
-        POS_int = int(POS)
-        self.line=str(self.READ_NAME + "\t" + str(self.FLAG) + "\t" + self.REF_NAME + "\t" + str(POS) + "\t" + str(self.MAPQ) + "\t" + self.CIGAR + "\t" + self.RNEXT + "\t" + str(self.PNEXT) + "\t" + str(self.TLEN) + "\t" + self.READ_SEQ + "\t" + self.QUAL + "\n")
+        self.line=str(self.READ_NAME + "\t" + str(self.FLAG) + "\t" + self.REF_NAME + "\t" + str(self.POS) + "\t" + str(self.MAPQ) + "\t" + self.CIGAR + "\t" + self.RNEXT + "\t" + str(self.PNEXT) + "\t" + str(self.TLEN) + "\t" + self.READ_SEQ + "\t" + self.QUAL + "\n")
         if verbose:
             print("Made SAM line for read " + self.READ_NAME + "from alignment.")
         return
@@ -121,6 +120,21 @@ class SAMline:
     
     def __len__(self) -> int:
         return len(self.READ_SEQ)
+  
+    def __lt__(self, obj):
+        return ((self.POS) < (obj.POS))
+  
+    def __gt__(self, obj):
+        return ((self.POS) > (obj.POS))
+  
+    def __le__(self, obj):
+        return ((self.POS) <= (obj.POS))
+  
+    def __ge__(self, obj):
+        return ((self.POS) >= (obj.POS))
+  
+    def __eq__(self, obj):
+        return (self.POS == obj.POS)
     
 class SAM:
     def __init__(self, SAMlines=[]) -> None:
@@ -159,4 +173,10 @@ class SAM:
             f.write(self.header)
             for line in self.SAMlines:
                 f.write(line.line)
+        return
+    
+    def SortSAM(self) -> None:
+        print(self.SAMlines[0:10])
+        self.SAMlines.sort()
+        print(self.SAMlines[0:10])
         return
