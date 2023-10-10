@@ -38,6 +38,7 @@ def main():
         SAM.append(S)
 
     SAM.SortSAM()
+    SAM.saveSAM("data/pickle/"+sam_file+".pickle")
     SAM.WriteSAM(sam_file)
 
 def progressbar(it, prefix="", size=60, out=sys.stdout): # Python3.3+

@@ -1,4 +1,10 @@
 from Bio import Align
+import pickle
+
+def loadSAM(sam_file: str) -> None:
+    with open(sam_file, 'rb') as f:
+        SAMobject = pickle.load(f)
+    return SAMobject
 
 def makeCIGAR(alignment) -> str:
     cigar = ""
@@ -166,6 +172,11 @@ class SAM:
     def __len__(self) -> int:
         return len(self.SAMlines)
 
+    def saveSAM(self, sam_file: str) -> None:
+        with open(sam_file, 'wb') as f:
+            pickle.dump(self, f)
+        return
+
     def WriteSAM(self, sam_file: str) -> None:
         if self.header == "":
             print("No header available. SAM file will NOT be valid! (Continuing anyway...)")
@@ -176,7 +187,5 @@ class SAM:
         return
     
     def SortSAM(self) -> None:
-        print(self.SAMlines[0:10])
         self.SAMlines.sort()
-        print(self.SAMlines[0:10])
         return
